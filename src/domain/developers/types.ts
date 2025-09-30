@@ -7,4 +7,7 @@ export interface IDeveloper {
 
 	email: string
 
+	// optional computed field, not persisted
+	revenue?: number
+
 }

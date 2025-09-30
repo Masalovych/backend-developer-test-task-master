@@ -2,7 +2,7 @@ import {
 	interfaces,
 	controller,
 	BaseHttpController,
-	httpGet, requestParam
+	httpGet, requestParam, queryParam
 } from 'inversify-express-utils';
 import { ApiOperationGet, ApiPath } from 'swagger-express-ts';
 import {
@@ -18,12 +18,13 @@ export class DevelopersController extends BaseHttpController implements interfac
 
 	constructor(
 		@inject('DevelopersService') private developersService: DevelopersService,
-	){ super() }
+	) { super() }
 
 	@httpGet('/')
 	@ApiOperationGet(getDevelopers)
-	public async getDevelopers(): Promise<DeveloperDto[]> {
-		return this.developersService.getDevelopers()
+	public async getDevelopers(@queryParam('include') include?: string): Promise<DeveloperDto[]> {
+		const includeRevenue = include === 'revenue'
+		return this.developersService.getDevelopers({ includeRevenue })
 	}
 
 	@httpGet('/:id')
