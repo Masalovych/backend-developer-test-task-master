@@ -7,18 +7,7 @@ export class DevelopersService {
 
 	constructor(
 		@inject('DevelopersRepository') private developersRepository: DevelopersRepository,
-	) { }
-
-	private async getContractsSafe(): Promise<any[]> {
-		try {
-			const maybeFn: any = (this.developersRepository as any).getContracts
-			if (typeof maybeFn !== 'function') return []
-			const result = await maybeFn.call(this.developersRepository)
-			return Array.isArray(result) ? result : []
-		} catch (_e) {
-			return []
-		}
-	}
+	) {}
 
 	async getDevelopers(options?: { includeRevenue?: boolean }): Promise<IDeveloper[]> {
 		const includeRevenue = !!options?.includeRevenue
@@ -29,41 +18,27 @@ export class DevelopersService {
 
 		const [developers, contracts] = await Promise.all([
 			this.developersRepository.getDevelopers(),
-			this.getContractsSafe()
+			this.developersRepository.getContracts(),
 		])
 
 		const completedByDeveloper = new Map<string, number>()
-		for (const c of contracts) {
-			if (c.status === 'completed') {
+		for (const contract of contracts) {
+			if (contract.status === 'completed') {
 				completedByDeveloper.set(
-					c.developerId,
-					(completedByDeveloper.get(c.developerId) || 0) + (c.amount || 0)
+					contract.developerId,
+					(completedByDeveloper.get(contract.developerId) || 0) + (contract.amount || 0)
 				)
 			}
 		}
 
-		return developers.map(d => ({
-			...d,
-			revenue: completedByDeveloper.get(d.id) || 0,
+		return developers.map(developer => ({
+			...developer,
+			revenue: completedByDeveloper.get(developer.id) || 0,
 		}))
 	}
 
 	async getDeveloperById(id: string) {
-		const [developer, contracts] = await Promise.all([
-			this.developersRepository.getDeveloperById(id),
-			this.getContractsSafe()
-		])
-
-		if (!developer) return developer
-
-		let revenue = 0
-		for (const c of contracts) {
-			if (c.developerId === id && c.status === 'completed') {
-				revenue += c.amount || 0
-			}
-		}
-
-		return { ...developer, revenue }
+		return this.developersRepository.getDeveloperById(id)
 	}
 
 }
