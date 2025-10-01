@@ -27,7 +27,7 @@ export const getDevelopers: IApiOperationArgsBase = {
 }
 
 export const getDeveloperById: IApiOperationArgsBase = {
-	summary: "Get developer by id (includes computed revenue from completed contracts)",
+	summary: "Get developer by id (used by contracts management dashboard)",
 	path: '/{id}',
 	parameters: {
 		path: { id: { required: true, name: 'id', description: 'Developer id' } },
