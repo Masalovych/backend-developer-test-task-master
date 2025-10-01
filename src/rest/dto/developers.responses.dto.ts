@@ -16,5 +16,7 @@ export class DeveloperDto implements IDeveloper {
 	@ApiModelProperty()
 	email: string
 
+	@ApiModelProperty({ description: 'Total revenue from completed contracts', required: false })
+	revenue?: number
 
 }

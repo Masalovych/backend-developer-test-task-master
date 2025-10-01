@@ -7,9 +7,16 @@ export const path: IApiPathArgs = {
 }
 
 export const getDevelopers: IApiOperationArgsBase = {
-	summary: "Get full list of developers (used by developers management dashboard and contracts management dashboard)",
+	summary: "Get full list of developers (optionally include revenue from completed contracts)",
 	path: '/',
 	parameters: {
+		query: {
+			include: {
+				required: false,
+				name: 'include',
+				description: "Optional include fields. Supported: 'revenue'",
+			}
+		}
 	},
 	responses: {
 		200: {
