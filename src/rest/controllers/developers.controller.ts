@@ -18,13 +18,12 @@ export class DevelopersController extends BaseHttpController implements interfac
 
 	constructor(
 		@inject('DevelopersService') private developersService: DevelopersService,
-	) { super() }
+	){ super() }
 
 	@httpGet('/')
 	@ApiOperationGet(getDevelopers)
 	public async getDevelopers(@queryParam('include') include?: string): Promise<DeveloperDto[]> {
-		const includeRevenue = include === 'revenue'
-		return this.developersService.getDevelopers({ includeRevenue })
+		return this.developersService.getDevelopers({ includeRevenue: include === 'revenue' })
 	}
 
 	@httpGet('/:id')
