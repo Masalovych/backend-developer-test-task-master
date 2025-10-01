@@ -7,7 +7,7 @@ export interface IDeveloper {
 }
 
 export interface IContract {
-	id: string
+	id: number | string
 	developerId: string
 	status?: string
 	amount?: number
