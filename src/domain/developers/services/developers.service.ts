@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { DevelopersRepository } from '../repositories/developers.repository';
 import { IDeveloper } from '../types'
+import { computeCompletedRevenueByDeveloper, addRevenueToDevelopers } from '../utils'
 
 @injectable()
 export class DevelopersService {
@@ -21,20 +22,8 @@ export class DevelopersService {
 			this.developersRepository.getContracts(),
 		])
 
-		const completedByDeveloper = new Map<string, number>()
-		for (const contract of contracts) {
-			if (contract.status === 'completed') {
-				completedByDeveloper.set(
-					contract.developerId,
-					(completedByDeveloper.get(contract.developerId) || 0) + (contract.amount || 0)
-				)
-			}
-		}
-
-		return developers.map(developer => ({
-			...developer,
-			revenue: completedByDeveloper.get(developer.id) || 0,
-		}))
+		const revenueByDeveloper = computeCompletedRevenueByDeveloper(contracts)
+		return addRevenueToDevelopers(developers, revenueByDeveloper)
 	}
 
 	async getDeveloperById(id: string) {
